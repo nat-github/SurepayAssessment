@@ -12,7 +12,7 @@ import org.testng.annotations.DataProvider;
                 "json:target/cucumber-reports/CucumberTestReport.json"
         },
         monochrome = true,
-        tags = "@Tests"
+        tags = "@Testing"
 )
 public class TestRunner extends AbstractTestNGCucumberTests  {
     @Override
