@@ -24,7 +24,8 @@ Feature: Verification of user and respective posts
     |Username|email|
     |Delphine|Chaim_McDermott@dana.io|
     |Elwyn.Skiles|Telly.Hoeger@billy.biz|
-    |Leopoldo_Corkery|cort              |
+    |Natarajan|Rey.Padberg@karina.biz|
+    |  NULL   |Null@test.com         |
 
   @UsersPostsTesting @SmokeTesting
   Scenario: Validate post structure

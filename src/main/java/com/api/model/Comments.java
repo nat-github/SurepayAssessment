@@ -3,7 +3,7 @@ package com.api.model;
 import lombok.Data;
 
 /**
- * This class represents a User object with id, name, username, email, website, phone, address, and company attributes.
+ * This class represents a Comments object with postid,id,name, email, body attributes.
  */
 @Data
 public class Comments {
