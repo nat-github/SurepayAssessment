@@ -11,8 +11,10 @@
   <url>http://maven.apache.org</url>
 
   <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <skipTests>true</skipTests>
+    <!--<skipTests>true</skipTests> -->
     <RestAssured>5.5.0</RestAssured>
     <cucumberJava>7.20.1</cucumberJava>
     <cucumberTestNG>7.20.1</cucumberTestNG>
@@ -25,7 +27,6 @@
       <groupId>io.rest-assured</groupId>
       <artifactId>rest-assured</artifactId>
       <version>${RestAssured}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.cucumber</groupId>
@@ -55,7 +56,10 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.5.2</version>
         <configuration>
-          <skipTests>${skipTests}</skipTests>
+          <suiteXmlFiles>
+            <suiteXmlFile>testng.xml</suiteXmlFile>
+          </suiteXmlFiles>
+        <!--  <skipTests>${skipTests}</skipTests> -->
         </configuration>
       </plugin>
     </plugins>

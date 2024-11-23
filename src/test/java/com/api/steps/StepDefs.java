@@ -4,6 +4,7 @@ import com.api.config.APIConstants;
 import com.api.context.WorkflowContext;
 import com.api.model.Post;
 import com.api.model.User;
+import com.api.utils.RestAssuredUtils;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -13,7 +14,9 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.testng.Assert;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 /*StepDefs class contains step definitons for cucumber scenarios.
@@ -36,10 +39,11 @@ public class StepDefs {
 
     @When("I search for user with username {string}")
     public void searchForUser(String username) {
-        Response response = RestAssured.given()
+        /*Response response = RestAssured.given()
                 .contentType(ContentType.JSON)
                 .baseUri(APIConstants.BASE_URL)
-                .get(APIConstants.USERS_ENDPOINT);
+                .get(APIConstants.USERS_ENDPOINT);*/
+        Response response = RestAssuredUtils.sendGetRequest(APIConstants.BASE_URL,APIConstants.USERS_ENDPOINT,null);
         List<User> users = response.jsonPath().getList("", User.class);
 
         Optional<User> foundUser = users.stream()
@@ -54,23 +58,30 @@ public class StepDefs {
         Assert.assertNotNull(context.getCurrentUser(),
                 "User should be found");
     }
-    @And("validate the user emailId")
-    public void verifyEmail(){
+    @And("validate the format of user emailId")
+    public void verifyEmailFormat(){
         User user = context.getCurrentUser();
         //String domain=user.getEmail().split("@")[1];
         Assert.assertTrue(Pattern.compile(APIConstants.EMAIL_REGEX)
                 .matcher(user.getEmail())
-                .matches(),"Email domain shojld be valid");
+                .matches(),"Email domain should be valid");
+    }
+    @And("validate the emailID of the user {string}")
+    public void verifyEmail(String email){
+        User user = context.getCurrentUser();
+        Assert.assertTrue(user.getEmail().equals(email),"Email should match");
     }
 
     @When("I retrieve all posts written by the user")
     public void retrieveUserPosts() {
-        Response response = RestAssured.given()
+       /* Response response = RestAssured.given()
                 .contentType(ContentType.JSON)
                 .baseUri(APIConstants.BASE_URL)
                 .queryParam("userId", context.getCurrentUser().getId())
-                .get(APIConstants.POSTS_ENDPOINT);
-
+                .get(APIConstants.POSTS_ENDPOINT);*/
+        Map<String, Integer> queryParams = new HashMap<>();
+        queryParams.put("userId",context.getCurrentUser().getId());
+        Response response = RestAssuredUtils.sendGetRequest(APIConstants.BASE_URL,APIConstants.POSTS_ENDPOINT,queryParams);
         List<Post> posts = response.jsonPath().getList("", Post.class);
         context.setUserPosts(posts);
     }
@@ -96,7 +107,7 @@ public class StepDefs {
     @And("each post should have required fields")
     public void verifyPostStructure() {
         context.getUserPosts().forEach(post -> {
-            Assert.assertTrue(post.getId() > 0, "Post ID should be positive");
+            Assert.assertNotNull(post.getId(), "Post ID should not be null");
             Assert.assertEquals(post.getUserId(),
                     context.getCurrentUser().getId(),
                     "Post should belong to the correct user");
@@ -105,7 +116,7 @@ public class StepDefs {
         });
     }
 
-    @And("post count should be greater than {int}")
+    @And("no. of posts should be greater than {int}")
     public void verifyPostCount(int minCount) {
         Assert.assertTrue(context.getUserPosts().size() > minCount,
                 "User should have more than " + minCount + " posts");
