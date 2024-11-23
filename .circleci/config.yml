@@ -20,8 +20,11 @@ jobs:
       - store_artifacts:
           path: target/surefire-reports
           destination: test-reports
-      - store_test_results:
-          path: target/surefire-reports/testng-results.xml
+      - store_artifacts:
+          path: target/surefire-reports
+          destination: target/surefire-reports/testng-results.xml    
+     # - store_test_results:
+     #     path: target/surefire-reports/testng-results.xml
 
 workflows:
   version: 2
