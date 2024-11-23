@@ -11,7 +11,7 @@ Feature: Verification of user and respective posts
     #Given start the wiremock for JSONPlaceholder API
 
   @FunctionalTesting @IntegrationTesting
-  Scenario Outline: Verify posts written by Delphine
+  Scenario Outline:"<TestCaseID>"_Validating of email format in the post for the user
     When I search for user with username "<Username>"
     Then the user should be found in the system
     And validate the emailID of the user "<email>"
@@ -21,11 +21,11 @@ Feature: Verification of user and respective posts
     And retrieve comments for each post
     Then validate email in each comment section
     Examples:
-    |Username|email|
-    |Delphine|Chaim_McDermott@dana.io|
-    |Elwyn.Skiles|Telly.Hoeger@billy.biz|
-    |Natarajan|Rey.Padberg@karina.biz|
-    |  NULL   |Null@test.com         |
+    |TestCaseID|Username|email|
+    |TC-01|Delphine|Chaim_McDermott@dana.io|
+    |TC-02|Elwyn.Skiles|Telly.Hoeger@billy.biz|
+    |TC-03|Natarajan|Rey.Padberg@karina.biz|
+    |TC-04|  NULL   |Null@test.com         |
 
   @UsersPostsTesting @SmokeTesting
   Scenario: Validate post structure
