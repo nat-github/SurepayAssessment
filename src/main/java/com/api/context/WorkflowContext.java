@@ -3,8 +3,10 @@ import com.api.model.User;
 import com.api.model.Post;
 import lombok.Data;
 import java.util.List;
-
-//Shared storage for data between different step definition classes
+/**
+ * This class serves as a shared storage for data between different step definition classes.
+ * It holds the current user, their posts, any error messages, and Id.
+ */
 @Data
 public class WorkflowContext {
     private User currentUser;

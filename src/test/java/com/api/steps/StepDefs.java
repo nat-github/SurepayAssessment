@@ -20,8 +20,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
-/*StepDefs class contains step definitons for cucumber scenarios.
-WorkflowContext is used to share data across multiple steps within a scenario */
+
+/**
+ * StepDefs class contains step definitons for cucumber scenarios.
+ * WorkflowContext is used to share data across multiple steps within a scenario - Dependency Injection
+ */
+
 public class StepDefs {
 
     //Dependency Injection
@@ -52,11 +56,9 @@ public class StepDefs {
                 .get(APIConstants.USERS_ENDPOINT);*/
         Response response = RestAssuredUtils.sendGetRequest(APIConstants.BASE_URL,APIConstants.USERS_ENDPOINT,null);
         List<User> users = response.jsonPath().getList("", User.class);
-
         Optional<User> foundUser = users.stream()
                 .filter(user -> user.getUsername().equals(username))
                 .findFirst();
-
         foundUser.ifPresent(user -> context.setCurrentUser(user));
     }
 

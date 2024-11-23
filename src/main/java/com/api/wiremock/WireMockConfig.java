@@ -11,6 +11,12 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 public class WireMockConfig {
     public static WireMockServer server;
     public static int port;
+    /**
+     * Starts the WireMock server with a dynamically assigned port and a console notifier.
+     *
+     * @see WireMockServer
+     * @see ConsoleNotifier
+     */
     public static void startServer(){
             server = new WireMockServer
                     (options().dynamicPort()
@@ -18,6 +24,9 @@ public class WireMockConfig {
             server.start();
             port = server.port();
     }
+    /**
+     * Sets up a stub for GET requests to the Users endpoint, returning a predefined JSON response with a status code of 200.
+     */
     public static void getUsers()
    {
         server.stubFor(get(urlEqualTo(APIConstants.WIREMOCK_USERS_ENDPOINT))
@@ -26,6 +35,7 @@ public class WireMockConfig {
                         .withStatus(200)));
 
     }
+     //Sets up a stub for GET requests to the Posts endpoint, returning a predefined JSON response with a status code of 200.
     public static void getPosts()
     {
         server.stubFor(get(urlEqualTo(APIConstants.WIREMOCK_POSTS_ENDPOINT))
@@ -34,6 +44,7 @@ public class WireMockConfig {
                         .withStatus(200)));
 
     }
+    //Stops the wiremock server
     public static void stopServer(WireMockServer server) {
         server.stop();
     }

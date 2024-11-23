@@ -6,8 +6,11 @@ Feature: Verification of user and respective posts
 
   Background:
     Given the JSONPlaceholder API is available
+
+    #IF service is unavailable,wiremock can also be an alternative - This is an experimental feature
     #Given start the wiremock for JSONPlaceholder API
 
+  @FunctionalTesting @IntegrationTesting
   Scenario Outline: Verify posts written by Delphine
     When I search for user with username "<Username>"
     Then the user should be found in the system
@@ -20,8 +23,9 @@ Feature: Verification of user and respective posts
     |Username|email|
     |Delphine|Chaim_McDermott@dana.io|
     |Elwyn.Skiles|Telly.Hoeger@billy.biz|
-    #|Leopoldo_Corkery|cort              |
+    |Leopoldo_Corkery|cort              |
 
+  @UsersPostsTesting @SmokeTesting
   Scenario: Validate post structure
     When I search for user with username "Delphine"
     And I retrieve all posts written by the user
