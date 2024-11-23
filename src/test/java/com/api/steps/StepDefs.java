@@ -2,9 +2,15 @@ package com.api.steps;
 
 import com.api.config.APIConstants;
 import com.api.context.WorkflowContext;
+import com.api.model.Comments;
 import com.api.model.Post;
 import com.api.model.User;
 import com.api.utils.RestAssuredUtils;
+import com.api.wiremock.WireMockConfig;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.PendingException;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -14,13 +20,14 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.testng.Assert;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Pattern;
-/*StepDefs class contains step definitons for cucumber scenarios.
-WorkflowContext is used to share data across multiple steps within a scenario */
+
+/**
+ * StepDefs class contains step definitons for cucumber scenarios.
+ * WorkflowContext is used to share data across multiple steps within a scenario - Dependency Injection
+ */
+
 public class StepDefs {
 
     //Dependency Injection
@@ -36,6 +43,13 @@ public class StepDefs {
         Assert.assertEquals(response.getStatusCode(), 200,
                 "API should be accessible");
     }
+    @Given("Start the Wiremock Server and load the stubs")
+    public void startServer(){
+        WireMockConfig.startServer();
+        WireMockConfig.getUsers();
+        WireMockConfig.getPosts();
+        WireMockConfig.getComments();
+    }
 
     @When("I search for user with username {string}")
     public void searchForUser(String username) {
@@ -45,11 +59,9 @@ public class StepDefs {
                 .get(APIConstants.USERS_ENDPOINT);*/
         Response response = RestAssuredUtils.sendGetRequest(APIConstants.BASE_URL,APIConstants.USERS_ENDPOINT,null);
         List<User> users = response.jsonPath().getList("", User.class);
-
         Optional<User> foundUser = users.stream()
                 .filter(user -> user.getUsername().equals(username))
                 .findFirst();
-
         foundUser.ifPresent(user -> context.setCurrentUser(user));
     }
 
@@ -103,7 +115,43 @@ public class StepDefs {
                     "Post body should not be empty");
         });
     }
-
+    @And("retrieve comments for each post")
+    public void retrievePostComments(){
+        context.getUserPosts().forEach(post -> {
+            /*Response response = RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .baseUri(APIConstants.BASE_URL)
+                    .queryParam("postId", context.getCurrentUser().getId())
+                    .get(APIConstants.COMMENTS_ENDPOINT);*/
+            Map<String, Integer> queryParams = new HashMap<>();
+            queryParams.put("postId",context.getCurrentUser().getId());
+            Response response = RestAssuredUtils.sendGetRequest(APIConstants.BASE_URL,APIConstants.COMMENTS_ENDPOINT,queryParams);
+            List<Comments> comments = response.jsonPath().getList("", Comments.class);
+            context.setComments(comments);
+        });
+    }
+    @Then("validate email in each comment section")
+    public void verifyCommentEmail() {
+        /*context.getComments().forEach(comment -> {
+            System.out.println(comment.getEmail());
+            Assert.assertTrue(Pattern.compile(APIConstants.EMAIL_REGEX)
+                    .matcher(comment.getEmail())
+                    .matches(),"Email domain should be valid");
+        });*/
+        List<String> invalidEmails = new ArrayList<>();
+        context.getComments().forEach(comment -> {
+            String email = comment.getEmail();
+            if (!Pattern.compile(APIConstants.EMAIL_REGEX).matcher(email).matches()) {
+                invalidEmails.add(email);
+            }
+        });
+        if (!invalidEmails.isEmpty()) {
+            System.out.println("Invalid email addresses found:");
+            invalidEmails.forEach(System.out::println);
+        } else {
+            System.out.println("All email addresses are valid");
+        }
+    }
     @And("each post should have required fields")
     public void verifyPostStructure() {
         context.getUserPosts().forEach(post -> {

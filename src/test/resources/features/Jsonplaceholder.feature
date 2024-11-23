@@ -6,22 +6,28 @@ Feature: Verification of user and respective posts
 
   Background:
     Given the JSONPlaceholder API is available
+
+    #IF service is unavailable,wiremock can also be an alternative - This is an experimental feature
     #Given start the wiremock for JSONPlaceholder API
 
+  @FunctionalTesting @IntegrationTesting
   Scenario Outline: Verify posts written by Delphine
     When I search for user with username "<Username>"
     Then the user should be found in the system
-    And validate the format of user emailId
     And validate the emailID of the user "<email>"
     When I retrieve all posts written by the user
     Then there should be posts available
     And each post should have valid title and body
+    And retrieve comments for each post
+    Then validate email in each comment section
     Examples:
     |Username|email|
     |Delphine|Chaim_McDermott@dana.io|
     |Elwyn.Skiles|Telly.Hoeger@billy.biz|
-    #|Leopoldo_Corkery|cort              |
+    |Natarajan|Rey.Padberg@karina.biz|
+    |  NULL   |Null@test.com         |
 
+  @UsersPostsTesting @SmokeTesting
   Scenario: Validate post structure
     When I search for user with username "Delphine"
     And I retrieve all posts written by the user
