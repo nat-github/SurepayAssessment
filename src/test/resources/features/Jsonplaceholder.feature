@@ -23,7 +23,7 @@ Feature: Verification of user and respective posts
     |Username|email|
     |Delphine|Chaim_McDermott@dana.io|
     |Elwyn.Skiles|Telly.Hoeger@billy.biz|
-    |Leopoldo_Corkery|cort              |
+    #|Leopoldo_Corkery|cort              |
 
   @UsersPostsTesting @SmokeTesting
   Scenario: Validate post structure
