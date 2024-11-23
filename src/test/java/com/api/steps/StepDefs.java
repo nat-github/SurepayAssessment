@@ -5,6 +5,7 @@ import com.api.context.WorkflowContext;
 import com.api.model.Post;
 import com.api.model.User;
 import com.api.utils.RestAssuredUtils;
+import com.api.wiremock.WireMockConfig;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -35,6 +36,12 @@ public class StepDefs {
         Response response = RestAssured.get(APIConstants.BASE_URL);
         Assert.assertEquals(response.getStatusCode(), 200,
                 "API should be accessible");
+    }
+    @Given("Start the Wiremock Server and load the stubs")
+    public void startServer(){
+        WireMockConfig.startServer();
+        WireMockConfig.getUsers();
+        WireMockConfig.getPosts();
     }
 
     @When("I search for user with username {string}")
