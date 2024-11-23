@@ -14,16 +14,17 @@ Feature: Verification of user and respective posts
   Scenario Outline: Verify posts written by Delphine
     When I search for user with username "<Username>"
     Then the user should be found in the system
-    And validate the format of user emailId
     And validate the emailID of the user "<email>"
     When I retrieve all posts written by the user
     Then there should be posts available
     And each post should have valid title and body
+    And retrieve comments for each post
+    Then validate email in each comment section
     Examples:
     |Username|email|
     |Delphine|Chaim_McDermott@dana.io|
     |Elwyn.Skiles|Telly.Hoeger@billy.biz|
-    #|Leopoldo_Corkery|cort              |
+    |Leopoldo_Corkery|cort              |
 
   @UsersPostsTesting @SmokeTesting
   Scenario: Validate post structure

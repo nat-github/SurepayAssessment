@@ -44,6 +44,14 @@ public class WireMockConfig {
                         .withStatus(200)));
 
     }
+    public static void getComments()
+    {
+        server.stubFor(get(urlEqualTo(APIConstants.WIREMOCK_POSTS_ENDPOINT))
+                .willReturn(WireMock.aResponse()
+                        .withBodyFile("GET_comments.json")
+                        .withStatus(200)));
+
+    }
     //Stops the wiremock server
     public static void stopServer(WireMockServer server) {
         server.stop();
